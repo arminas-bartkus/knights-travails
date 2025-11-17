@@ -16,63 +16,40 @@ const knightMovements = [
 
 function knightMoves(
   [startingPosX, startingPosY],
-  [targetXPos, targetYPos] = [4, 2]
+  [targetXPos, targetYPos] = [7, 7]
 ) {
-
-   if ((startingPosX === targetXPos) && (startingPosY === targetYPos)) {
-    return "HI"
-   }
-
+  if (startingPosX === targetXPos && startingPosY === targetYPos) {
+    return "HI";
+  }
 
   let startingPosition = [startingPosX, startingPosY];
-  let queue = [{ pos: startingPosition, path: [] }];
+  let queue = [{ pos: startingPosition, path: [startingPosition] }];
 
-  let availableMoves = [];
+  while (queue.length > 0) {
+    let current = queue.shift();
 
-  knightMovements.forEach((move) => {
-    let newXCoord = move[0] + queue[0].pos[0];
-    let newYCoord = move[1] + queue[0].pos[1];
-
-    if (
-      newXCoord < maxXPos &&
-      newXCoord > minXPos &&
-      newYCoord < maxYPos &&
-      newYCoord > minYPos
-    ) {
-      availableMoves.push([newXCoord, newYCoord]);
+    if (current.pos[0] === targetXPos && current.pos[1] === targetYPos) {
+      console.log(current.path);
+      return current.path;
     }
-  });
 
-  let currentPath = queue[0].path;
-  availableMoves.forEach((setOfCoords) => {
-    let pathCopy = currentPath.slice();
+    knightMovements.forEach((move) => {
+      let newX = current.pos[0] + move[0];
+      let newY = current.pos[1] + move[1];
 
-    pathCopy.push(setOfCoords);
+      if (
+        newX >= minXPos &&
+        newX <= maxXPos &&
+        newY >= minYPos &&
+        newY <= maxYPos
+      ) {
+        let newPath = current.path.slice();
+        newPath.push([newX, newY]);
 
-    let newObjectForQueue = {
-      pos: setOfCoords,
-      path: pathCopy,
-    };
-    queue.push(newObjectForQueue);
-  });
-
-  queue.shift();
-
-  queue.forEach((route) => {
-    let currentPosition = route.pos;
-
-    if (
-      currentPosition[0] === targetXPos &&
-      currentPosition[1] === targetYPos
-    ) {
-
-        console.log(route.path);
-        return
-
-    } else {
-        knightMoves([route.pos[0], route.pos[1]], [targetXPos, targetYPos])
-    }
-  });
+        queue.push({ pos: [newX, newY], path: newPath });
+      }
+    });
+  }
 }
 
-knightMoves([0, 0]);
+knightMoves([3, 6]);
